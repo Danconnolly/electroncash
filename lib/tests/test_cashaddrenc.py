@@ -27,6 +27,7 @@ import binascii
 import unittest
 import random
 from lib import cashaddr
+from lib import address
 
 
 BCH_PREFIX = "bitcoincash"
@@ -178,6 +179,19 @@ class TestCashAddrAddress(unittest.TestCase):
             self.assertEqual(rprefix, BCH_PREFIX)
             self.assertEqual(kind, cashaddr.PUBKEY_TYPE)
             self.assertEqual(addr_hash, hashbytes)
+
+    def test_sample_keys(self):
+        """Test sample keys from data file."""
+        keys = {}
+        with open("bch_addresses.csv") as file:
+            for line in file:
+                components = line.split(',')
+                keys[components[0]] = components[1].strip()
+        for old, new in keys.items():
+            n = address.Address.from_string(new)
+            o = address.Address.from_string(old)
+            self.assertEqual(n.hash160,o.hash160)
+
 
 if __name__ == '__main__':
     unittest.main()
